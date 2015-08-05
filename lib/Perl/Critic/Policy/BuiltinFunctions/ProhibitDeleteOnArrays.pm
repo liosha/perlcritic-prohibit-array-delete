@@ -26,22 +26,51 @@ sub applies_to           { return 'PPI::Token::Word'       }
 sub violates {
     my ( $self, $elem, undef ) = @_;
     return if $elem ne 'delete';
-    return if ! is_function_call( $elem );
+    return if !is_function_call($elem);
 
-    my @args = parse_arg_list($elem);
-    return if !@args;
-    my $arg = shift @args;
+    my ($ppi_arg) = parse_arg_list($elem);
+    return if !$ppi_arg;
 
-#    use YAML; say STDERR Dump($arg);
-    my $subscr = $arg->[-1];
+    my $subscr = _get_delete_subscript($ppi_arg);
     return if !$subscr;
-    return if !$subscr->isa("PPI::Structure::Subscript") && !$subscr->isa("PPI::Structure::Constructor");
 
     if ($subscr->start->content eq q#[#) {
         return $self->violation( $DESC, $EXPL, $elem );
     }
 
     return;
+}
+
+
+sub _get_delete_subscript {
+    my ($arg) = @_;
+
+    my $subscr;
+    for my $i (1 .. $#$arg) {
+        my $token = $arg->[$i];
+
+        if (
+            $token->isa("PPI::Structure::Subscript")
+            || (
+                $i == 2 &&
+                $token->isa("PPI::Structure::Constructor") &&
+                $arg->[$i-2]->isa("PPI::Token::Cast")
+            )
+        ) {
+            $subscr = $token;
+            next;
+        }
+
+        last if !(
+            $token->isa("PPI::Token::Cast") ||
+            $token->isa("PPI::Token::Symbol") ||
+            $token->isa("PPI::Structure::Block") ||
+            ( $token->isa("PPI::Token::Operator") && $token->content eq '->' )
+        );
+    }
+
+    return $subscr;
+
 }
 
 

@@ -10,7 +10,7 @@ delete $array[1]->{a};
 delete $arrayref->[0]->{a};
 
 ## name Basic failures
-## failures 10
+## failures 12
 ## cut
 
 delete $array[0];
@@ -23,6 +23,8 @@ delete ${$arrayref}[0];
 delete ${$hashref}{a}->[0];
 delete $$arrayref[0];
 delete @{$arrayref}[0,2];
+$r = delete $arrayref[0] || $hash{n};
+delete $arrayref[0] if $hash{a};
 
 ## name Misunderstandings
 ## failures 0
@@ -32,3 +34,5 @@ my %hash = (delete => $array[1]);
 delete $hash{delete};
 my $example = "delete $array[0]";
 TestPackage->new()->delete($array[2]);
+$r = delete $hash{s} || $array[0];
+delete $hash{s} if $array[1];
