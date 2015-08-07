@@ -1,5 +1,7 @@
 package Perl::Critic::Policy::BuiltinFunctions::ProhibitDeleteOnArrays;
 
+# ABSTRACT: Do not use delete on arrays
+
 use 5.006001;
 use strict;
 use warnings;
@@ -82,11 +84,6 @@ __END__
 
 =pod
 
-=head1 NAME
-
-Perl::Critic::Policy::BuiltinFunctions::ProhibitDeleteOnArrays - Do not use
-C<delete> on arrays.
-
 =head1 DESCRIPTION
 
 Calling delete on array values is strongly discouraged. See
@@ -95,10 +92,6 @@ L<http://perldoc.perl.org/functions/delete.html>.
 =head1 CONFIGURATION
 
 This Policy is not configurable except for the standard options.
-
-=head1 AUTHOR
-
-Aleksey Korabelshchikov L<mailto:xliosha@gmail.com>
 
 =cut
 
